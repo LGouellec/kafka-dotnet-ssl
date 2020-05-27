@@ -268,4 +268,127 @@ You can found configuration files in samples\broker-configuration.
 
 ### Create Consumer certificate
 
+1. Create a private key / public key certificate pair for the consumer client
+
+The .NET client is not Java based and consequently doesn't use Java's JKS container format for storing private keys and certificates. We will use openssl to create the key / certificate pair for the client, not keytool as we did for the broker.
+
+The first step is to create a Certificate Signing Request (CSR). Note: there is no need to explicitly create a self signed certificate first as we did for the broker.
+
+``` bash
+openssl req -newkey rsa:2048 -nodes -keyout consumer_client.key -out consumer_client.csr
+Generating a 2048 bit RSA private key                                                                       
+....+++                                                                                                     
+......................+++                                                                                   
+writing new private key to 'consumer_client.key'                                                            
+-----                                                                                                       
+You are about to be asked to enter information that will be incorporated                                    
+into your certificate request.                                                                              
+What you are about to enter is what is called a Distinguished Name or a DN.                                 
+There are quite a few fields but you can leave some blank                                                   
+For some fields there will be a default value,                                                              
+If you enter '.', the field will be left blank.                                                             
+-----                                                                                                       
+Country Name (2 letter code) [XX]:FR                                                                        
+State or Province Name (full name) []:France                                                                
+Locality Name (eg, city) [Default City]:Clermont-Ferrand                                                    
+Organization Name (eg, company) [Default Company Ltd]:MyCompagny                                            
+Organizational Unit Name (eg, section) []:                                                                  
+Common Name (eg, your name or your server's hostname) []:consumer.mycompagny.com                            
+Email Address []:                                                                                           
+                                                                                                            
+Please enter the following 'extra' attributes                                                               
+to be sent with your certificate request                                                                    
+A challenge password []:                                                                                    
+An optional company name []:                                                                                
+```
+
+2. Now you have the CSR, you can generate a CA signed certificate as follows
+
+``` bash
+openssl x509 -req -CA root.crt -CAkey root.key -in consumer_client.csr -out consumer_client.crt -days 365 -CAcreateserial
+Signature ok
+subject=/C=FR/ST=France/L=Clermont-Ferrand/O=MyCompagny/CN=consumer.mycompagny.com
+Getting CA Private Key
+```
+
+3. Create ConsumerConfig instance and set these property
+
+``` csharp
+var config = new ConsumerConfig
+{
+	BootstrapServers = "192.168.56.1:9093",
+	GroupId= "consumer-group-ssl",
+	ClientId = "consumer-ssl-01",
+	SaslMechanism = SaslMechanism.Plain,
+	SecurityProtocol = SecurityProtocol.SaslSsl,
+    SaslUsername = "admin",
+    SaslPassword = "admin",
+    SslEndpointIdentificationAlgorithm = SslEndpointIdentificationAlgorithm.None,
+    SslCaLocation = @"[YOUR_PATH]\root.crt",
+    SslCertificateLocation = @"[YOUR_PATH]\consumer_client.crt",
+    SslKeyLocation = @"[YOUR_PATH]\consumer_client.key"
+};
+```
+
 ### Create Producer certificate
+
+1. Create a private key / public key certificate pair for the producer client
+
+The .NET client is not Java based and consequently doesn't use Java's JKS container format for storing private keys and certificates. We will use openssl to create the key / certificate pair for the client, not keytool as we did for the broker.
+
+The first step is to create a Certificate Signing Request (CSR). Note: there is no need to explicitly create a self signed certificate first as we did for the broker.
+
+``` bash
+openssl req -newkey rsa:2048 -nodes -keyout producer_client.key -out producer_client.csr
+Generating a 2048 bit RSA private key                                                                       
+....+++                                                                                                     
+......................+++                                                                                   
+writing new private key to 'producer_client.key'                                                            
+-----                                                                                                       
+You are about to be asked to enter information that will be incorporated                                    
+into your certificate request.                                                                              
+What you are about to enter is what is called a Distinguished Name or a DN.                                 
+There are quite a few fields but you can leave some blank                                                   
+For some fields there will be a default value,                                                              
+If you enter '.', the field will be left blank.                                                             
+-----                                                                                                       
+Country Name (2 letter code) [XX]:FR                                                                        
+State or Province Name (full name) []:France                                                                
+Locality Name (eg, city) [Default City]:Clermont-Ferrand                                                    
+Organization Name (eg, company) [Default Company Ltd]:MyCompagny                                            
+Organizational Unit Name (eg, section) []:                                                                  
+Common Name (eg, your name or your server's hostname) []:producer.mycompagny.com                            
+Email Address []:                                                                                           
+                                                                                                            
+Please enter the following 'extra' attributes                                                               
+to be sent with your certificate request                                                                    
+A challenge password []:                                                                                    
+An optional company name []:                                                                                
+```
+
+2. Now you have the CSR, you can generate a CA signed certificate as follows
+
+``` bash
+openssl x509 -req -CA root.crt -CAkey root.key -in producer_client.csr -out producer_client.crt -days 365 -CAcreateserial
+Signature ok
+subject=/C=FR/ST=France/L=Clermont-Ferrand/O=MyCompagny/CN=producer.mycompagny.com
+Getting CA Private Key
+```
+
+3. Create ProducerConfig instance and set these property
+
+``` csharp
+var config = new ProducerConfig
+{
+    BootstrapServers = "192.168.56.1:9093",
+    ClientId = "producer-ssl-01",
+    SaslMechanism = SaslMechanism.Plain,
+    SecurityProtocol = SecurityProtocol.SaslSsl,
+    SaslUsername = "admin",
+    SaslPassword = "admin",
+    SslEndpointIdentificationAlgorithm = SslEndpointIdentificationAlgorithm.None,
+    SslCaLocation = @"[YOUR_PATH]\root.crt",
+    SslCertificateLocation = @"[YOUR_PATH]\producer_client.crt",
+    SslKeyLocation = @"[YOUR_PATH]\producer_client.key"
+};
+```

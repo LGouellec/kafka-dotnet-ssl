@@ -17,9 +17,9 @@ namespace consumer_ssl
                 SaslUsername = "admin",
                 SaslPassword = "admin",
                 SslEndpointIdentificationAlgorithm = SslEndpointIdentificationAlgorithm.None,
-                SslCaLocation = @"D:\RepoTest\kafka-ssl\samples\broker-certs\root.crt",
-                SslCertificateLocation = @"D:\RepoTest\kafka-ssl\samples\client-certs\consumer_client.crt",
-                SslKeyLocation = @"D:\RepoTest\kafka-ssl\samples\client-certs\consumer_client.key"
+                SslCaLocation = @"root.crt",
+                SslCertificateLocation = @"consumer_client.crt",
+                SslKeyLocation = @"consumer_client.key"
             };
             
             var builder = new ConsumerBuilder<string, string>(config);

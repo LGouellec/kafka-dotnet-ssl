@@ -7,6 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\samples\broker-certs\root.crt" Link="root.crt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\samples\client-certs\producer_client.crt" Link="producer_client.crt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\samples\client-certs\producer_client.key" Link="producer_client.key">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="1.4.3" />
   </ItemGroup>
 

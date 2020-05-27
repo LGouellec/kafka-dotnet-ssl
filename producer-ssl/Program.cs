@@ -16,9 +16,9 @@ namespace producer_ssl
                 SaslUsername = "admin",
                 SaslPassword = "admin",
                 SslEndpointIdentificationAlgorithm = SslEndpointIdentificationAlgorithm.None,
-                SslCaLocation = @"D:\RepoTest\kafka-ssl\samples\broker-certs\root.crt",
-                SslCertificateLocation = @"D:\RepoTest\kafka-ssl\samples\client-certs\producer_client.crt",
-                SslKeyLocation = @"D:\RepoTest\kafka-ssl\samples\client-certs\producer_client.key"
+                SslCaLocation = @"root.crt",
+                SslCertificateLocation = @"producer_client.crt",
+                SslKeyLocation = @"producer_client.key"
             };
 
             var builder = new ProducerBuilder<string, string>(config);
